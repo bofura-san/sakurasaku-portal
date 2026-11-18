@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サクラサク寮歌 ポータル</title>
+<style>
+  :root{
+    --bg:#faf7f2; --card:#ffffff; --ink:#2b2622; --muted:#7a6f66;
+    --accent:#c2567a; --accent2:#5b8c5a; --line:#e7ddd2; --chip:#f3e9e2;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#1d1a17; --card:#2a2521; --ink:#ece5dc; --muted:#a89a8c;
+      --accent:#e08bab; --accent2:#93c491; --line:#453c34; --chip:#38302a; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+    line-height:1.7;padding:32px 16px 64px}
+  .wrap{max-width:760px;margin:0 auto}
+  header{text-align:center;margin-bottom:8px}
+  h1{font-size:2rem;margin:0;letter-spacing:.12em}
+  h1 .sakura{color:var(--accent)}
+  .subtitle{color:var(--muted);font-size:.95rem;margin-top:4px}
+  .series-note{color:var(--muted);font-size:.85rem;text-align:center;margin:10px 0 28px}
+  .ep{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;margin-bottom:18px}
+  .ep-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .ep-no{font-weight:700;color:var(--accent);font-size:1.05rem;white-space:nowrap}
+  .ep-title{font-weight:700;font-size:1.12rem}
+  .badge{font-size:.72rem;padding:2px 10px;border-radius:999px;background:var(--chip);
+    color:var(--muted);white-space:nowrap}
+  .badge.done{color:var(--accent2)}
+  .synopsis{color:var(--muted);font-size:.92rem;margin:8px 0 14px}
+  .links{display:flex;flex-wrap:wrap;gap:8px}
+  .links a{display:inline-block;text-decoration:none;color:var(--ink);
+    border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:.88rem;
+    background:var(--bg)}
+  .links a:hover{border-color:var(--accent);color:var(--accent)}
+  .links a.main{background:var(--accent);border-color:var(--accent);color:#fff}
+  .links a.main:hover{opacity:.88;color:#fff}
+  .missing{opacity:.55}
+  footer{color:var(--muted);font-size:.8rem;text-align:center;margin-top:30px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="sakura">サクラサク</span>寮歌</h1>
+    <div class="subtitle">Sakura Saku Dorm Song: My Neighbor from Another World</div>
+  </header>
+  <p class="series-note">各話の原文・翻訳・中国語学習セットへのリンク集です。原文の正本は Dropbox「myproject/04English系/サクラサク」にあります。</p>
+
+  <section class="ep">
+    <div class="ep-head">
+      <span class="ep-no">第1話</span>
+      <span class="ep-title">到着</span>
+      <span class="badge done">学習セット完成</span>
+    </div>
+    <p class="synopsis">上京初日。くそったれ親父への手紙、東京駅でなくした財布、仮坂の急な坂道。やっとたどり着いたサクラサク寮の玄関で、太郎は行き倒れる。</p>
+    <div class="links">
+      <a href="files/EP1CN_study.html" class="main">学習用HTML（拼音・対訳・音声）</a>
+      <a href="files/EP1CN_vocab.html">単語帳</a>
+      <a href="files/EP1CN_qwen3_full.mp3">全編音声（中国語・10分37秒）</a>
+      <a href="files/EP1JP.txt">原文</a>
+      <a href="files/EP1CN_new.txt">簡体字訳</a>
+      <a href="files/EP1EN_new.txt">英訳</a>
+    </div>
+  </section>
+
+  <section class="ep">
+    <div class="ep-head">
+      <span class="ep-no">第2話</span>
+      <span class="ep-title">歓迎会</span>
+      <span class="badge done">学習セット完成</span>
+    </div>
+    <p class="synopsis">二家・雪子・夏子との廊下の歓迎会。同じ大学に入る氷雨雪子との出会い、近づくなと言われる103号室、そして銀行で判明する「残高ゼロ」。</p>
+    <div class="links">
+      <a href="files/EP2CN_study.html" class="main">学習用HTML（拼音・対訳・音声）</a>
+      <a href="files/EP2CN_vocab.html">単語帳</a>
+      <a href="files/EP2CN_full.mp3">全編音声（中国語・12分06秒）</a>
+      <a href="files/EP2JP.txt">原文</a>
+      <a href="files/EP2CN_new.txt">簡体字訳</a>
+      <a href="files/EP2EN_new.txt">英訳（新訳）</a>
+    </div>
+  </section>
+
+  <section class="ep">
+    <div class="ep-head">
+      <span class="ep-no">第3話</span>
+      <span class="ep-title">銭湯の警告</span>
+      <span class="badge done">学習セット完成</span>
+    </div>
+    <p class="synopsis">金欠で再び玄関に倒れる太郎。銭湯で二家から「おユキちゃんに近づくな」と「仕事」の誘いを受け、雪子からは逆の懇願をされる。</p>
+    <div class="links">
+      <a href="files/EP3CN_study.html" class="main">学習用HTML（拼音・対訳・音声）</a>
+      <a href="files/EP3CN_vocab.html">単語帳</a>
+      <a href="files/EP3CN_full.mp3">全編音声（中国語・13分04秒）</a>
+      <a href="files/EP3JP.txt">原文</a>
+      <a href="files/EP3CN_new.txt">簡体字訳</a>
+    </div>
+  </section>
+
+  <section class="ep">
+    <div class="ep-head">
+      <span class="ep-no">第4話</span>
+      <span class="ep-title">バイトなし、希望なし？</span>
+      <span class="badge">日本語は英語版から復元</span>
+    </div>
+    <p class="synopsis">「サクラサク寮」と言った瞬間に断られるバイト探し。雪子は「ヤクザ」を知らなかった。二人で武蔵大のキャンパスを見学し、帰り着いた寮の上には――ドラゴンの影。日本語原文が行方不明のため、Obsidian に残っていた英語版から日本語を復元した。</p>
+    <div class="links">
+      <a href="files/EP4JP.txt" class="main">日本語（復元版）</a>
+      <a href="files/Episode%204%20-%20No%20Job%2C%20No%20Hope.md">英語版（現存する原文）</a>
+    </div>
+  </section>
+
+  <section class="ep">
+    <div class="ep-head">
+      <span class="ep-no">第5話</span>
+      <span class="ep-title">どこでもない場所への扉</span>
+      <span class="badge">準備中（振り分け・簡体字訳まで完了）</span>
+    </div>
+    <p class="synopsis">誰もいない静まり返った寮。103号室で高熱の少女を見つけた太郎は、押し入れの中の異様な扉を開けてしまい、ファンタジーの世界へ飲み込まれる。</p>
+    <div class="links">
+      <a href="files/EP5JP.txt">原文</a>
+      <a href="files/EP5CN_new.txt">簡体字訳</a>
+    </div>
+  </section>
+
+  <footer>
+    配役（中国語音声）：太郎=Dylan／二家=Uncle_Fu／雪子=Serena／夏子=Vivian<br>
+    ポータル作成：2026-11-19
+  </footer>
+</div>
+</body>
+</html>
