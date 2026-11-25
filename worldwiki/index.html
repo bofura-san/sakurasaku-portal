@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>サクラサク寮歌 ワールドWiki試作</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600;700;900&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2rem; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+
+      :root {
+        --paper: #f6f1e7;
+        --paper-2: #fffdf7;
+        --paper-3: #efe7d7;
+        --ink: #28241b;
+        --ink-2: #5d5748;
+        --ink-3: #8a8271;
+        --line: #ddd2bd;
+        --line-soft: #e7ddc9;
+        --accent: #2e5b43;
+        --accent-ink: #24503a;
+        --accent-soft: #e2ecdf;
+        --sakura: #b0445f;
+        --sakura-soft: #f7e3e7;
+        --warn-bg: #fdf4dc;
+        --warn-line: #e0c078;
+        --warn-ink: #75590e;
+        --cand-bg: #eef0f7;
+        --cand-line: #a9b4d4;
+        --cand-ink: #3c4a75;
+        --shadow: 0 1px 2px rgba(60, 48, 20, .06), 0 6px 18px rgba(60, 48, 20, .05);
+        --c-taro: #2e5b43;
+        --c-yukiko: #b0445f;
+        --c-natsuko: #a8741a;
+        --c-nike: #476b9e;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #161814;
+          --paper-2: #1e211c;
+          --paper-3: #262a23;
+          --ink: #ece7d8;
+          --ink-2: #b3ac99;
+          --ink-3: #857e6c;
+          --line: #3a3f35;
+          --line-soft: #2e332b;
+          --accent: #93c7a6;
+          --accent-ink: #a9d6ba;
+          --accent-soft: #223528;
+          --sakura: #e08ba1;
+          --sakura-soft: #3a242c;
+          --warn-bg: #38300f;
+          --warn-line: #8a6f24;
+          --warn-ink: #ecd28a;
+          --cand-bg: #232a42;
+          --cand-line: #54628f;
+          --cand-ink: #b3c0e8;
+          --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+          --c-taro: #93c7a6;
+          --c-yukiko: #e08ba1;
+          --c-natsuko: #dfae54;
+          --c-nike: #93aede;
+        }
+      }
+
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
+        font-size: 15.5px;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent-ink); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .serif { font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+
+      /* ---------- header ---------- */
+      .site-header {
+        position: sticky; top: 0; z-index: 40;
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      .site-header-inner {
+        max-width: 1120px; margin: 0 auto; padding: 10px 20px;
+        display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      }
+      .site-title {
+        font-family: "Noto Serif JP", serif; font-weight: 900; font-size: 19px;
+        color: var(--ink); letter-spacing: .02em; display: flex; align-items: baseline; gap: 10px;
+      }
+      .site-title:hover { text-decoration: none; }
+      .site-title .sub { font-size: 12px; font-weight: 600; color: var(--ink-2); font-family: "Noto Sans JP", sans-serif; }
+      .ver-badge {
+        font-size: 11px; font-weight: 700; color: var(--accent-ink);
+        background: var(--accent-soft); border: 1px solid var(--line);
+        padding: 1px 8px; border-radius: 999px; white-space: nowrap;
+      }
+      .site-nav { margin-left: auto; display: flex; gap: 4px; }
+      .site-nav a {
+        color: var(--ink-2); font-size: 13.5px; font-weight: 500;
+        padding: 8px 12px; border-radius: 8px; min-height: 36px; display: inline-flex; align-items: center;
+      }
+      .site-nav a:hover { background: var(--paper-3); text-decoration: none; color: var(--ink); }
+
+      .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+
+      /* ---------- home ---------- */
+      .lead { max-width: 46em; color: var(--ink-2); margin: 4px 0 0; }
+      .lead strong { color: var(--ink); }
+      h1.page-title {
+        font-family: "Noto Serif JP", serif; font-weight: 900;
+        font-size: clamp(26px, 4.5vw, 38px); line-height: 1.35; margin: 6px 0 10px;
+      }
+      .stats {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 26px 0 8px;
+      }
+      .stat {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 10px;
+        padding: 12px 16px; box-shadow: var(--shadow);
+      }
+      .stat .num { font-family: "Noto Serif JP", serif; font-size: 26px; font-weight: 900; line-height: 1.2; }
+      .stat .lbl { font-size: 12px; color: var(--ink-2); }
+      h2.section-title {
+        font-family: "Noto Serif JP", serif; font-weight: 700; font-size: 21px;
+        margin: 40px 0 6px; padding-bottom: 8px; border-bottom: 2px solid var(--ink);
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      h2.section-title .note { font-family: "Noto Sans JP", sans-serif; font-size: 12.5px; font-weight: 400; color: var(--ink-2); }
+      .section-lead { color: var(--ink-2); font-size: 14px; margin: 8px 0 16px; max-width: 48em; }
+
+      .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .char-card {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 12px;
+        padding: 20px 22px; box-shadow: var(--shadow); display: block; color: var(--ink);
+        border-top: 3px solid var(--cc, var(--accent));
+      }
+      .char-card:hover { text-decoration: none; border-color: var(--line); }
+      .char-card .name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+      .char-card .cname { font-family: "Noto Serif JP", serif; font-size: 27px; font-weight: 900; line-height: 1.2; }
+      .char-card .cfull { color: var(--ink-2); font-size: 13.5px; }
+      .char-card .summary { color: var(--ink-2); font-size: 14px; margin: 8px 0 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .attr-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+      .chip {
+        font-size: 12px; background: var(--paper-3); border: 1px solid var(--line-soft);
+        border-radius: 999px; padding: 2px 10px; color: var(--ink-2); white-space: nowrap;
+      }
+      .chip b { color: var(--ink); font-weight: 600; }
+      .card-foot {
+        display: flex; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line-soft);
+        padding-top: 10px; font-size: 12.5px; color: var(--ink-2);
+      }
+      .card-foot .big { font-family: "Noto Serif JP", serif; font-size: 17px; font-weight: 700; color: var(--ink); }
+      .narr-badge {
+        font-size: 11.5px; font-weight: 700; color: var(--accent-ink);
+        background: var(--accent-soft); border-radius: 999px; padding: 2px 10px; white-space: nowrap;
+      }
+
+      .ep-list { display: flex; flex-direction: column; gap: 10px; }
+      .ep-row {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 12px;
+        padding: 16px 20px; box-shadow: var(--shadow); display: block; color: var(--ink);
+      }
+      .ep-row:hover { text-decoration: none; border-color: var(--line); }
+      .ep-row .ep-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+      .ep-row .ep-no { font-family: "Noto Serif JP", serif; font-weight: 900; font-size: 18px; white-space: nowrap; }
+      .ep-row .ep-title { font-family: "Noto Serif JP", serif; font-weight: 700; font-size: 16.5px; }
+      .ep-row .ep-title.none { color: var(--ink-3); font-weight: 600; font-size: 14px; }
+      .ep-row .ep-meta { margin-left: auto; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+      .mention-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+      .mchip {
+        font-size: 12.5px; border-radius: 999px; padding: 2px 11px; white-space: nowrap;
+        border: 1px solid var(--line-soft); background: var(--paper-3); color: var(--ink-2);
+      }
+      .mchip.hit { background: var(--paper-2); color: var(--ink); border-color: var(--line); }
+      .mchip.hit b { color: var(--mc, var(--accent-ink)); }
+      .mchip .cnt { font-weight: 700; }
+
+      .memo-box {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 12px;
+        padding: 18px 22px; box-shadow: var(--shadow); font-size: 14px; color: var(--ink-2);
+      }
+      .memo-box h3 { font-size: 14.5px; color: var(--ink); margin: 18px 0 6px; }
+      .memo-box h3:first-child { margin-top: 0; }
+      .memo-box p { margin: 6px 0; }
+      .memo-box code {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px;
+        background: var(--paper-3); border-radius: 5px; padding: 1px 6px; color: var(--ink);
+      }
+      .memo-box ul { margin: 6px 0; padding-left: 1.3em; }
+      .memo-box li { margin: 3px 0; }
+
+      /* ---------- detail pages ---------- */
+      .crumbs { font-size: 13px; color: var(--ink-2); margin-bottom: 14px; }
+      .crumbs a { padding: 6px 2px; display: inline-block; }
+      .detail-head { margin-bottom: 8px; }
+      .detail-head .big-name {
+        font-family: "Noto Serif JP", serif; font-weight: 900;
+        font-size: clamp(34px, 6vw, 48px); line-height: 1.15; margin: 0;
+        display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      }
+      .detail-head .full-name { color: var(--ink-2); font-size: 16px; margin-top: 4px; }
+      .color-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--cc); display: inline-block; flex: none; }
+      .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; margin-top: 18px; }
+      .detail-main { min-width: 0; }
+      .detail-side { position: sticky; top: 76px; }
+
+      .infobox {
+        background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px;
+        overflow: hidden; box-shadow: var(--shadow);
+      }
+      .infobox .ib-title {
+        font-family: "Noto Serif JP", serif; font-weight: 700; font-size: 15px;
+        background: var(--paper-3); padding: 10px 16px; border-bottom: 1px solid var(--line-soft);
+      }
+      .infobox table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+      .infobox th, .infobox td { padding: 8px 16px; text-align: left; vertical-align: top; }
+      .infobox th { color: var(--ink-2); font-weight: 600; white-space: nowrap; width: 34%; }
+      .infobox tr + tr th, .infobox tr + tr td { border-top: 1px solid var(--line-soft); }
+      .infobox .terms { display: flex; flex-wrap: wrap; gap: 5px; }
+      .term-tag {
+        font-size: 12px; background: var(--paper-3); border: 1px solid var(--line-soft);
+        border-radius: 6px; padding: 1px 8px; white-space: nowrap;
+      }
+      .term-tag.zero { opacity: .55; }
+      .term-tag .n { color: var(--ink-3); font-size: 11px; margin-left: 3px; }
+
+      .narrator-banner {
+        background: var(--accent-soft); border: 1px solid var(--line); border-radius: 12px;
+        padding: 16px 20px; margin: 18px 0 4px; font-size: 14px;
+      }
+      .narrator-banner .nb-title { font-weight: 700; color: var(--accent-ink); margin-bottom: 4px; }
+      .narrator-banner p { margin: 4px 0; color: var(--ink); }
+      .ore-table { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+      .ore-cell {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 8px;
+        padding: 4px 12px; font-size: 12.5px; color: var(--ink-2);
+      }
+      .ore-cell b { color: var(--ink); font-size: 14px; }
+
+      .sec-block { margin-top: 30px; }
+      .sec-block h2 {
+        font-family: "Noto Serif JP", serif; font-weight: 700; font-size: 20px;
+        border-bottom: 2px solid var(--ink); padding-bottom: 7px; margin: 0 0 12px;
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      .sec-block h2 .en { font-size: 12px; color: var(--ink-3); font-family: "Noto Sans JP", sans-serif; font-weight: 500; letter-spacing: .08em; }
+      .sec-body { color: var(--ink); max-width: 44em; }
+      .sec-body p { margin: 0 0 12px; }
+      .sec-body .unfilled { color: var(--ink-3); }
+
+      .mention-table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+      .mention-table th, .mention-table td { padding: 11px 16px; text-align: left; vertical-align: top; }
+      .mention-table thead th { background: var(--paper-3); font-size: 12.5px; color: var(--ink-2); border-bottom: 1px solid var(--line-soft); }
+      .mention-table tbody tr + tr td { border-top: 1px solid var(--line-soft); }
+      .mention-table .ep-cell { white-space: nowrap; font-weight: 600; }
+      .mention-table .cnt-cell { font-family: "Noto Serif JP", serif; font-weight: 900; font-size: 18px; white-space: nowrap; }
+      .mention-table .cnt-cell.zero { color: var(--ink-3); font-weight: 600; font-size: 14px; font-family: "Noto Sans JP", sans-serif; }
+      .mention-table tr.no-hit td { color: var(--ink-3); }
+      .first-badge {
+        font-size: 11px; font-weight: 700; color: var(--sakura);
+        background: var(--sakura-soft); border-radius: 999px; padding: 1px 8px; margin-left: 8px; white-space: nowrap;
+      }
+      .breakdown { display: flex; flex-wrap: wrap; gap: 5px; }
+      .excerpt {
+        margin-top: 14px; background: var(--paper-3); border-radius: 10px; padding: 14px 18px;
+        font-family: "Noto Serif JP", serif; font-size: 14.5px; line-height: 1.9;
+      }
+      .excerpt .ex-label { font-family: "Noto Sans JP", sans-serif; font-size: 12px; font-weight: 700; color: var(--ink-2); display: block; margin-bottom: 4px; }
+      .excerpt mark, .reader mark {
+        background: color-mix(in srgb, var(--mc, var(--accent)) 20%, transparent);
+        color: inherit; border-bottom: 2px solid var(--mc, var(--accent));
+        border-radius: 2px; padding: 0 1px;
+      }
+      .excerpt mark.cand, .reader mark.cand {
+        background: transparent; border-bottom: 2px dashed var(--cand-line);
+      }
+
+      .warn-box {
+        background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 12px;
+        padding: 15px 19px; margin-top: 16px; font-size: 13.5px; color: var(--ink);
+      }
+      .warn-box .wb-title { font-weight: 700; color: var(--warn-ink); margin-bottom: 4px; }
+      .warn-box p { margin: 4px 0; }
+      .cand-box {
+        background: var(--cand-bg); border: 1px solid var(--cand-line); border-radius: 12px;
+        padding: 15px 19px; margin-top: 16px; font-size: 13.5px;
+      }
+      .cand-box .wb-title { font-weight: 700; color: var(--cand-ink); margin-bottom: 4px; }
+      .cand-box p { margin: 4px 0; }
+      .cand-box table { border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+      .cand-box th, .cand-box td { padding: 4px 14px 4px 0; text-align: left; }
+
+      /* ---------- episode page ---------- */
+      .ep-detail-head .ep-no-label { font-size: 13px; font-weight: 700; color: var(--accent-ink); letter-spacing: .06em; }
+      .reverse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+      .reverse-card {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 12px;
+        padding: 15px 18px; box-shadow: var(--shadow); display: block; color: var(--ink);
+        border-top: 3px solid var(--cc, var(--accent));
+      }
+      .reverse-card:hover { text-decoration: none; border-color: var(--line); }
+      .reverse-card .rc-name { font-family: "Noto Serif JP", serif; font-weight: 900; font-size: 20px; display: flex; align-items: baseline; gap: 8px; }
+      .reverse-card .rc-cnt { margin-left: auto; font-size: 13px; color: var(--ink-2); font-family: "Noto Sans JP", sans-serif; font-weight: 500; }
+      .reverse-card .rc-cnt b { font-family: "Noto Serif JP", serif; font-size: 21px; color: var(--ink); }
+      .reverse-card .breakdown { margin-top: 8px; }
+      .reverse-card.absent { opacity: .62; border-top-color: var(--line); }
+      .reverse-card .rc-note { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; }
+
+      .reader-toolbar {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 14px 0 12px;
+      }
+      .reader-toolbar .rt-label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); margin-right: 2px; }
+      .toggle-chip {
+        font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+        border: 1px solid var(--line); background: var(--paper-2); color: var(--ink-2);
+        border-radius: 999px; padding: 6px 14px; min-height: 36px;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .toggle-chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--cc, var(--ink-3)); opacity: .35; }
+      .toggle-chip[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-2); background: var(--paper-3); }
+      .toggle-chip[aria-pressed="true"] .dot { opacity: 1; }
+      .reader {
+        background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: 12px;
+        box-shadow: var(--shadow); padding: clamp(20px, 4vw, 40px);
+        font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-size: 15.5px; line-height: 2.05; max-height: 72vh; overflow-y: auto;
+      }
+      .reader p { margin: 0 0 1.1em; }
+      .reader p:last-child { margin-bottom: 0; }
+      .reader .scene-break { text-align: center; color: var(--ink-3); letter-spacing: 1em; margin: 1.4em 0; }
+
+      .site-footer {
+        border-top: 1px solid var(--line); margin-top: 8px;
+        padding: 22px 20px 34px; color: var(--ink-3); font-size: 12.5px;
+      }
+      .site-footer .sf-inner { max-width: 1120px; margin: 0 auto; }
+      .site-footer code { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; }
+
+      @media (max-width: 860px) {
+        .detail-grid { grid-template-columns: 1fr; }
+        .detail-side { position: static; order: -1; }
+        .char-grid { grid-template-columns: 1fr; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+        .site-nav { margin-left: 0; }
+        .mention-table th, .mention-table td { padding: 10px 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="site-title" href="#/">サクラサク寮歌 <span class="sub">ワールドWiki</span></a>
+        <span class="ver-badge">試作 v1</span>
+        <nav class="site-nav">
+          <a href="#/">トップ</a>
+          <a href="#/" data-nav="chars">キャラクター</a>
+          <a href="#/" data-nav="eps">話一覧</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap" id="app"></main>
+    <footer class="site-footer">
+      <div class="sf-inner">
+        データの正本は Markdown ファイル群（<code>worldwiki_sakurasaku/characters/*.md</code>）と原稿テキスト（EP1〜EP5 日本語原文）。このページはそのスナップショットを表示しています。言及回数は本名・本名フルネーム・登録済み別名の文字列照合による自動検出で、実際の登場とは限りません。
+      </div>
+    </footer>
+    <script>
+      "use strict";
+      /* ===== データ（正本 Markdown + 原稿テキストから生成したスナップショット） ===== */
+      const DATA = {"characters": [{"attributes": {"種族": "人間", "性別": "男", "役割": "主人公・語り手"}, "aliases": ["太郎さん", "太郎くん", "坊主"], "manual_appearances": [], "name": "太郎", "full_name": "", "narrator": true, "valid_from": "", "valid_to": "", "sections": {"Summary": "九州の田舎から上京してきた大学生。本作の主人公であり、一人称の語り手。", "Appearance": "（未記入）", "History": "（未記入）"}, "color_key": "taro"}, {"attributes": {"種族": "異世界人", "性別": "女"}, "aliases": ["雪子さん", "おユキちゃん"], "manual_appearances": [], "name": "雪子", "full_name": "氷雨雪子", "narrator": false, "valid_from": "", "valid_to": "", "sections": {"Summary": "お隣の異世界人。EP2 で「私、氷雨雪子です！」と自己紹介する。", "Appearance": "（未記入）", "History": "（未記入）"}, "color_key": "yukiko", "candidates": [{"term": "オユキちゃん", "note": "「おユキちゃん」の全カタカナ表記。夏子や二家のセリフで使われます。とくに第5話では雪子への言及がこの表記でしか現れないため、登録済みの照合だけでは第5話の雪子は「言及なし」になってしまいます。"}, {"term": "おゆきちゃん", "note": "「おユキちゃん」の全ひらがな表記。第2話に現れます。"}], "watch_notes": [{"term": "少女", "note": "第1〜2話の「少女」は名前が明かされる前の雪子を指しますが、第5話の「少女」は倒れていた小さな子（別人物）を指します。別名に登録すると第5話で雪子が誤検出されます。"}]}, {"attributes": {"性別": "女", "備考": "主婦"}, "aliases": ["夏子さん"], "manual_appearances": [], "name": "夏子", "full_name": "", "narrator": false, "valid_from": "", "valid_to": "", "sections": {"Summary": "寮の住人。主婦。雪子のことは「おユキちゃん」と呼ぶ。", "Appearance": "（未記入）", "History": "（未記入）"}, "color_key": "natsuko"}, {"attributes": {"性別": "男"}, "aliases": [], "manual_appearances": [], "name": "二家", "full_name": "", "narrator": false, "valid_from": "", "valid_to": "", "sections": {"Summary": "寮の住人。", "Appearance": "（未記入）", "History": "（未記入）"}, "color_key": "nike", "candidates": [{"term": "ニケ", "note": "「二家」の読み（にけ）での呼称。第2話の原稿にも「ニケさん（雪子から二家への呼称）」と注記があり、作中では本名の「二家」より圧倒的にこの形で呼ばれています。登録済み別名に無いため、現在の二家の言及回数は実態より大幅に少なく出ます。"}]}], "episodes": [{"n": 1, "title": null, "text": "サクラサク寮歌 ～お隣の異世界人～\n\n拝啓、くそったれ親父殿。\n首都、桜の季節。\n俺は夢にまで見た東京にいます。\n地元・九州のド田舎を離れ、ネオン輝く大都市の——まだ見てないけど、まあ何日かすれば見られる——そこから電車で30分。あまりそちらと変わらない、山に近い住宅街の、天国まで通じているような長い長い坂を登っています。\n三年前に高校に入学したとき、当たり前のように大学進学すると思っていた俺に、卒業次第旅館で働かせると宣言したあなたと殴り合いの喧嘩になったことも、今は懐かしく思えます。\nせめて経営者としての経験を積むため、一切の援助なしに大学生活を乗り越えろと言ったあなたに、受けて立つと宣言したことを、後悔しています。\nまさか、東京駅についた瞬間、財布がどこかに消え失せるとは思っていませんでした。\n知ってますか。東京は駅がとても広いのです。見たことない店がずらりと並び、腹をすかせた俺は、記念の一食をどのオシャレな店で食べるか悩んでいました。ズボンのポケットに何もないことに気づくまでは。\n知ってますか。東京駅には交番もあるのです。駅の中に。俺は上京して最初に、交番の警官と話しました。電車代を貸してもらうために。\n警官は親切にも、実家に電話しろと言ってくれました。俺は携帯電話を持っていなかったから、薄っぺらい電話帳で番号を探してくれました。実家が温泉旅館だったことを、人生で初めて感謝しました。あなたが無慈悲にも、自分でなんとかしろと言うまでは。\nくそったれ親父殿。\nあのとき受話器を投げず（実際に投げたわけじゃなくて、そんな勢いで通話を切ってやった）、あなたに土下座をするべきだったと今は後悔しています。\n\nもうやめよう。頭の中で手紙を書いても親父には届かないし、送ってもなんの意味もない。\n親切にも、警官は電車賃を「くれた」。肉親から冷徹な言葉を投げられた俺に同情してくれたみたいだ。\n聞いてるか、親父。赤の他人に同情されたよ俺。おかげで中央線（Chuo Line）から総武線（Sobu Line）に乗り換えて、この仮坂（Karisaka）にたどり着くことができた。\nだけどまだ、目的地にはついていない。\nあと——何分登れば、この坂道は終わるんだ？\n引きずってるスーツケースもレンガが入ってるみたいに重い。こんな坂が東京にあるなんて嘘だろ。実は東京に来たなんて夢で、俺はまだ大分にいるんじゃないのか。\nくそ、喉が乾いたし腹も減った。プライドなんて捨てて、警官に食事代も借りればよかった。\n近隣住民らしき人たちは、当たり前のように坂を行き来している。東京の人間って、実は地方よりもよっぽど足腰が丈夫なんじゃないかと思える。\nただ、彼らの視線が気になった。\n確かに、こんな大荷物で坂を登っているのは奇妙だろう。バスがあるんだから。もうニ回も通り過ぎていった。\nでも、そういうのじゃない。「おのぼりさんが東京をナメちゃってたのね」っていう嘲笑でも「お金が無くてかわいそうな若者ね」という同情でもない。\nなんというか……なにか、とてもめずらしいものを見るような——上京してきた若者なんかじゃなくて、珍獣でもみたかのような——今後の付き合いに不安を覚えているような——そんな視線だって言えば、わかってくれるだろうか。\n\nだがとりあえず、そんなことはいい。\nほとんど死に体の俺を動かしているのは、やっと自由の身になった初日に行き倒れるような情けない姿を誰にも見せたくないという意地と、ここさえ乗り切れば、今後の城となる新しい住居にたどり着くという希望だった。\nサクラサク寮。なんて縁起のいい名前なんだ（日本では大学の入学試験に合格することをサクラサク——桜が咲くって表現するんだ）。まるで俺の輝かしい未来を祝福してくれているようじゃないか。\n正直、ネットに掲載されていた写真と、東京都内のワンルームで賃料が月二万円という若干の不安要素がないではなかったが。めちゃくちゃ古い建物らしい。\nでも東京だぜ？\nまさか廃屋ってわけでもないだろうし、俺が申し込んだ時点でほとんど満室だったし、ちょっと築年数が長いだけの、古民家みたいなところなんだろう。贅沢は言わない。屋根があればそれでいい。\nいや、せめてエアコンでもあれば——テレビも——ネット回線くらいは——\n\nもう無理だ。俺の足はついに止まってしまった。\nギシギシと痛む腕でスーツケースを引っ張り上げて、腰掛ける。他人の視線なんか気にしている場合ではない。とにかく休まないとマジで倒れてしまう。\n「……くそ、喉乾いた……」\n誰に話しかけたわけでもない。もしかしたら親切な人が聞きつけて、水でもくれたら嬉しい——と、そんなことを考えながら、あくまで独り言として言ったのだ。\n「ほっほっほ」\nと声が聞こえた。水が来た！\n「ありがとうございます！」\nあらかじめ感謝しながら振り返ると、そこには上品で知的そうなおじいさんが立っていた。\n手には……水はない。\nないのか。\n改めて見るとそこまで上品でもなさそうだったし、知的そうでもなかった。ただのじいさんだ。\n「お前さん、そんな荷物でどこ行くんだい。上京してきたのかい」\n「はあ、まあ……」くそ、喉が痛い。「武蔵大（Musashi University）に入学するんです」\n「ああ、ムサダイ（MushaDai）か。おめでとうよ」\n爺さんはホッホッホと笑った。そんな笑い方する人、本当にいるんだな。\n「ありがとうございます」祝福してくれるのは素直に嬉しい。喉は痛い。「それで、サクラサク寮ってところに引っ越してきたんですよ」\nじいさんが固まった。\nちょっと待っても動かなかった。もしかして急に死んだか？　この急坂で体力が限界だったのか？\n「……お前さん、サクラサク寮に入居するのかい」\nよかった、生きてた。\n「ええまあ、有名なんですか？」\n「いや、うむ……その、私とここで会ったことは忘れてくれないか」\n「は？」\n「今後は顔を合わせることもないだろう。せめて……そうだ。餞別にこれをあげよう。食べなさい」\n「ちょっと待ってください。サクラサク寮って普通の寮ですよね？」\n「ふがふが。あー、すまんすまん。最近耳が遠くてな」\n「ふがふが！？　いきなりどうしたんだよ！？」\n\n　老人は懐から取り出したものを俺に押し付けて、そそくさと立ち去っていった。上り坂なのに驚くようなスピードだ。ありゃとうぶん死なないな……ところで何をくれたんだろう？\n……塩大福。\n俺は食べた。貪ってやった。\nそしてそのしょっぱさと甘ったるさに、うめき声を上げた。\n嫌がらせ……じゃないよな？\nだがカロリーを摂取したことで、なんとか……なんとか俺は、やっとのことで坂を登りきることができたのだった。\nその光景は、俺を絶望の縁に叩き落とした。\nネットで見た写真では覚悟していたつもりだった。しかし、実際に目の前で見ると、想像の遥か斜め上を行くボロさだった。\nこれはもはや文化財だ。きっと国が保護してるんだ。見学料で稼いでるって言われても全然驚かない。\nなぜ今まで崩れずに存在できていたのかが謎だった。なんだか傾いているようにも見える。\n\n「……まあ、大丈夫だ。人が住んでるんだし、そう危険ってわけじゃない……はず」\n\n自分にそう言い聞かせながら、俺はフラフラとアパートの入口へ向かう。喉の渇きは限界を迎え、視界もぼやける。そして、最後の一歩を踏み出した瞬間、俺の体力は本当に限界を迎えた。平たく言うと、やたら古い木張りの床に倒れ込んだ。\n\nドタドタと足音が聞こえた。\n\n「おいおい、こんなところで行き倒れかよ！」\n\n薄れゆく意識の中で、慌てたような、でもどこか楽しそうな声が聞こえる。\n\n「あらまあ…かわいそうに」\n\n優しく落ち着いた女性の声。\n\n「ねえ、大丈夫ですか？ 聞こえます？」\n\n若い女性の声が、はっきりと聞こえた。\n\n俺は最後の力を振り絞って、かすれるように言葉を紡ぐ。\n\n「……みず……」\n\n「おい水だ。おユキちゃん。思いっきり冷やしたヤツ頼む」\n「はいっ」\n\n再び慌ただしい足音。すぐに、コップが唇に押し当てられる。俺は無我夢中で飲み干した。冷たい。あまりにも冷たい。だけど水だ！　俺の命は助かったんだ！\n\n息をつき、ようやく周りを見渡す。\n\n俺を囲んで、三人の男女が座り込んでいる。\nぼんやりした顔の男。\nおしとやかで上品な女性。\nそして、透き通る白い肌の少女。\n\n彼らとの初対面は、まあこんな感じだ。\n要するに、情けないところを見られたのだ。\n"}, {"n": 2, "title": null, "text": "「体調は大丈夫なんですか？」\n少女は相変わらず心配そうに俺を覗き込んでくる。他の二人は、俺がここの入居者だとわかったらさっさと姿を消していた。\n「ああ、うん」あまりに顔が近かったので、俺は少しドキドキしながら答えた。「朝からなにも食べてなくて……ほら、ここに来るまでの坂がキツくて」\n「駅からずっと登ってきたんですか！？」\nやっぱり非常識だったみたいだ。そりゃあ、普通はバスを使うよな。\n廊下の扉が開いた。プレートに「201」と書かれた部屋だ。\nそこから先程の男が顔をだして、\n「根性あるじゃねーか。んじゃこれご褒美」\nと言いながら、一升瓶とつまみの袋を両手に出てきて、板張りの床にドンと置いた。\nはあ？\n「ニケさん（雪子から二家への呼称）、太郎さんはまだついたばかりなんですよ。それに今まで倒れてたし」\n「何も食べてないって言っただろ？　食え食え」\nつまみを出される。さきいか、あたりめ、小魚……腹が膨れるようなものじゃない。\nすると反対側の扉が開いて、さっきの女性が出てきた。\n「これ、おやつに食べようと思ってたんだけど」\nとコンビニのカツ丼を見せてくる。\n「食べる？」\nおやつにカツ丼……？　ちょっと怪しいけど、腹が勝手に答えた。女性は口に手を当ててクスクス笑うと、温めてあげると言ってまた引っ込んだ。\n恥ずかしくなって少女を見ると、彼女も笑っていた。くそっ。\n気がつくと男はすでに飲み始めていた。\n「ニケさん！　昼間っから飲まないって約束したじゃないですか！」\n「歓迎会はノーカンだろ？　なあ少年、少年もお酒が栄養源だよな！」\n「俺、未成年なんですけど」\n「酒を飲まない未成年なんかいるのか？」\nこいつダメ人間だ。\n「いや、親が厳しくて……」\n高校の頃は、親が絶対に酒を飲ませてくれなかった。実は一度だけ、友達の家でこっそり飲んだことがあるんだが、アルコールの匂いを察知した親父にしばかれてやはり殴り合いの喧嘩になった。別に親父が怖かったわけじゃないが、飲むたびにあんなになるのが面倒で、それ以降は一切飲まなかった。\n別に親父を理不尽だと思ったわけじゃない。温泉旅館という性質上、ウチでは毎晩のように宴会が開かれている。俺たち家族の部屋は少し離れたところにあって、酔っ払いたちの声が聞こえなかった日はない。迷惑行為をする客も多く、そのおかげで親父は酒に関してはかなり厳しかったのだ。自分が飲むときも、子どもにみっともない姿を見せないようにと気遣っていた。\nだから……ちょっと待て。もう俺は大分にいるわけじゃない。\n親父と殴り合う必要はないんだ！\n俺の表情の変化になにかを察したのか、おっさんは空のコップを差し出してきた。\n「大人の階段登るってやつだ」\n恐る恐る受け取ると、日本酒がなみなみと注がれた。\n「嫌だったら飲まなくていいんですよ？　私が怒っておきますから」\n少女……オユキちゃんさん？はそう言ってくれたが、もはや俺は自由だ！\nぐいっと一気に飲み干す。\n「おいおい、やるじゃねーか。負けてられん」\nおっさんはそう言って自分のコップに酒をつぐ。\nその頃にさっきの女性が部屋から出てきた。手にはさっきのカツ丼と、なにかお酒っぽいのが入ったビニール袋がある。\n「まあまあ、始まってるのね」\n「夏子さんまで……」\n「いいじゃない。私、こういうの好きよ。おゆきちゃんはジュースでいい？」\n「あ、はい」\nオユキちゃんは流されやすい性格みたいだ。\n「さて。おゆきちゃん、俺はただ酒が飲みたくてこの場を設けたわけじゃないんだぞ」\nおっさんはあぐらをかいたまま、威張るように胸をはる。\n「まだ俺はこいつを認めたわけじゃない」\nはあ？\n「でもニケさん。太郎さんがくるってわかって喜んでたじゃないですか」\n「それとこれとは別の話だ」\n「あの」俺は思わず話を遮った。\n「俺の名前、もうみんな知ってるんですか？」\n三人は顔を見合わせる。\n「ああ！　そうそう、大家さんが教えてくれたんです」\nなにか取り繕うようにおゆきちゃんが言う。\n大家さん？\n「あんまり細かいことは気にするな、少年」\n「いや、俺が入居するって聞いておっさんが喜んでるのは気になるでしょう」\n「細かい！　細かいよ少年！　そういうのはもっと仲良くなってから話してやろう」\n「つまり？」\n「もっと飲め」\nやっぱ飲みたいだけじゃねえか。\n俺は助けを求めるように女性の方を見たが、彼女は意味深に笑っているだけでなにも教えてくれないようだった。\n「さて、少年」おっさんが杯を回しながら尋ねた。「玄関で行き倒れてたが、何があった？」\n俺は額を押さえながら呻いた。\n「……いや実は、東京駅で財布を失くしちゃって」\n「えっ」とオユキちゃんが驚く。\n「どうやってここまで来たんだ？」\n「交番でお金を借りたんです」\n「今はアレがあんだろ。なんだっけ。キャッシュレス？」\n「俺、ケータイ持ってないんで」\n三人はまた顔を見合わせる。\n「一応聞くけど、君、この世界の日本の人だよな？」\n「いっときますけど、九州にもケータイはありますよ。親が持たせてくれなかっただけです」\n「いやいや、馬鹿にしてるわけじゃねーよ。なあ」\nおっさんが話をふると、ふたりとも頷く。\n「私も操作を覚えるの、大変だったんだもの」と女性。\n「私なんて、まだ全然」とオユキちゃん。\n「まあそんな落ち込むな。俺なんて一年の半分は金ないぞ」\n　そういえば今日は平日だ。このおっさん、もしかして無職だろうか。\n「ええと、ニケさんだっけ？」\n「おっと待て。言われる前に言っておくが、俺は自営業だからな」\n「なんの？」\n「あー。揉め事の解決とか？」\n「無職？」\n「うるせえ。たまに仕事はあるんだよ」\n「せっかくだから、自己紹介しましょうか」と女性。「私は菅谷夏子って言うの。主婦だから私も無職かしら？」\n「はっはっは。お前、夏子さんのこと無職って言ったな」\n「俺は言ってないですし、主婦は無職じゃありません！」\n「オユキちゃんも無職だぞ」\n「違います！」とおユキちゃん。「来週から大学生ですから！」\n大学生？\n「太郎さん！　私、氷雨雪子です！　ムサダイに入学するんですよ！」\n「ムサダイ？　それって……」\n「同じ大学です！」\nマジか？\nこんなことある？\n上京してきて、新しく住むことになった場所に、同じ大学に入る女の子がいる？\n一緒に大学まで通うのか？\n二人で？\nああ、なんてことだ。サクラサク寮にしてよかった。マジでよかった。\n「なんつー顔だよ。おいオユキちゃん。こいつが襲ってきたら俺の部屋に来いよ」\n「おっさん！」\n「おっさんとはなんだおっさんとは！」\n憤慨するおっさんをよそに、俺はおユキちゃん……じゃなくて氷雨さんを見た。\nうわ、なんか笑顔が引きつってる。\n「そんな人でなしじゃないから！　こう……友達になれたらなって！」\n「信じるなよー、男は狼だぞ」\n背後からおっさんが口を出してくる。\n「……夏子さんの旦那さんも狼でした？」\n心配そうに、隣の夏子に尋ねるおユキちゃん。夏子さんはあらあらまあまあと口に手を当てると、\n「そうねぇ～。すごく情熱的だったわ。罰を受けることがわかってて、私をさらって……」\n「さらって！？」\nなんだかとんでもない話が始まりそうになっているので、俺は止めた。\n「そういえば……他にも住んでる人、いるんですよね？」\n「そうだ、忘れてた」おっさんは酒を飲み干すと、廊下の一角を指差す。\n「あそこの103号室な。あそこには絶対に近づくなよ」\n「絶対？」言われなくとも、他人の部屋に迷惑をかけるつもりはないが、近づくのもダメなのか？\n「いや、誤解しないでくれ。君がなんかするのを疑ってるわけじゃなくて、あそこに住んでるやつが、体調を崩してるんだ」\n「もしかしてコロナですか？」\n「感染症とかそういうのじゃないから、それは心配するな。ただあいつの機嫌がな」\n「気難しい人なんですか」\n「熱だしてイライラしてるだけだ。君の部屋は一番遠いところだから、普通に暮らしてたら平気だから」\n「熱が下がったら、またご紹介しますね」とオユキちゃん。「いい子なんですよ」\nその口ぶりから、同年代の女の子なんだろうか。\n「他にも何人か住んでるから会うこともあるだろう」おっさんは言った。「そんときによろしく言っときゃいい」\n「ねえねえオユキちゃん。入学前に大学に見学に行きたいって言ってたじゃない？」夏子さんが言った。\n「はい。でもみんなが止めるから……」\n「太郎くんと行ってきたらいいじゃない。それなら反対しないわよ、みんな」\n「本当ですか！？」\n目を輝かせる氷雨さん……雪子さん……おゆきさん？　なんて呼べばいいんだろう。\n「太郎さん、連れて行ってくれませんか！？」\n「べ、別にいいけど……」\nなんで一人で行くことを止められているのか、理由がわからなかった。小さな子どもってわけでもないのに。\nそれより彼女と二人で大学だ！　なんか入居早々、ラッキーな気分になる。\n入学までに仲良くなって、美人の彼女持ちになって……\n「だがよ、少年」おっさんが俺のコップに酒を注ぎながら言った。「大学はこっから電車だろ？　金あるのか？」\n嫌なことを思い出させるなよな。\nでも確かにそうだ。大学生活どころじゃない。\n今日の夜になにか食べる金もないし、さらに最悪なことに、来月分の家賃を払うことができなければ追い出されることになる。\nいや待て。そうだ、通帳があるじゃないか！\n通帳と印鑑があれば、銀行口座から金を下ろすことができる！　俺は大慌てで彼らに説明し、近くに支店があることを確かめると、寮を飛び出した。\nなんで気づかなかったんだ。これですべて解決だ……当座のところは。\nだが、現実はそう甘くはなかった。\nそもそも俺の口座には、とりあえずの生活費と来月分の家賃しか入ってなかったわけだが……その口座が、どうやらゼロになっていたのだった。\n「不正使用されたのであれば、キャッシュカードをお止めしますが」\nそう言われ、俺はただ頷くことしかできなかった。\n俺の財布は心無いやつに拾われ、なけなしの金は奪われてしまったのだ。\nああ……どうする？\nとりあえず今日は……ああクソ、帰ってふて寝するには、またあの坂を登らなきゃ……\n大学生活までたどり着けるのか、俺。\n\n"}, {"n": 3, "title": null, "text": "「がーっ……死ぬ……！　死んでしまう！」\n　再び寮の玄関に倒れて、俺は叫んだ。ニケ……名字なのか名前かもわからん……と雪子さん、夏子さんが、出ていったときのままで迎えてくれた。\n「忙しいやっちゃな～。金なんてどうにでもなるだろ」\n「バイト……バイトしないと、今すぐ、日雇いの……！　明日を生きていく金がないんです！」\n「ご飯くらい、ごちそうするわよ？　どうせ２人分作るんだし、3人分になっても変わらないもの」\n夏子さんの優しさが身にしみるぜ。だけどただでもらうわけにはいかない。そんなことがバレたら、親父が飛行機で即日連れ戻しに来るだろう。\n「バイト見つかったら、食費はお返しします……」\n　俺は倒れた姿勢から土下座に移行しつつ、例を言った。\n\n「あの……案内してもらうんですから、電車代は私が出します。キャンパス、行きましょうね」\nそう言って微笑みながら、おユキちゃんはドアを閉めた。\n俺に割り当てられた201号室の、和室6畳間。外見に劣らずボロいが、どことなく古い匂いは実家と似たようなもので、意外と落ち着く。なんとトイレ共用、風呂はなし。すぐ隣に銭湯があって、家賃に含まれている。銭湯に入り放題なのは素直に嬉しけど、東京の物件としてはかなりありえない部類に入る。\n友達ができても連れてくることはできないな。まずめちゃくちゃ声が響くだろうし、馬鹿にされそうだ。\nだがそれでいいのだ。\nここにおユキちゃんがいるってバレたら、なんのかんのと理由をつけて押しかけてくるだろうし。\n……まだいない友達を想像して優越感を感じるのって、わびしいな。\nしかし、どうしよう。\n一応、さっきまでのパニックはおさまった。でも依然として、金がないという現実が目の前にある。\nさっきの言葉は嘘じゃない。明日にでもバイトを始めないと、マジで追い出されてしまう。\n「バイト……そうだ。確かさっき……」\nほとんど無意識のまま寮に帰ってきた俺だが、そこはしっかり、坂の下にあるコンビニで求人情報誌をゲットしていた。自動ドアをくぐった覚えもないんだが、ここにあるんだからあるだろう。\nこれでも温泉旅館の長男だ。手伝いで接客は手慣れている。このへんの客がどのくらい多いかは知らないが、繁忙期の観光地より多いってことはないだろう。\nふむふむ。コンビニ、パチンコ屋、喫茶店……喫茶店はいいな。こう、なんかオシャレだよな。\nおお、東京にはゲーセンもあるのか。ちょっと足を伸ばせば学習塾……家庭教師も悪くないな。\nああ、自分で職業を選べるなんて最高じゃないか。家を飛び出してきてよかった。\n「気持ち悪い顔しとるなー」\n「うおおおおっ！」\n気がつくと入口のドアが開いていて、ニケのおっさんが覗き込んでいた。\n「おっさん！　ここにはプライベートはないのか！」\n「いやノックしたってーの。返事がないからまた倒れたのかと心配してやったんじゃねーか」\n「それはっ！　……そ、それは……ありがとうございます」\nおっさんはからから笑って、\n「なんだぁ、意外と素直じゃねーか。さっきのは強がりか？」\n「親切心を無碍にするような教育はされてないんで」\n「いいとこ育ちなんだなー。そういや、おい、風呂入るだろ」\n「は？　ええまあ。めちゃくちゃ汗かいたし」\n「俺達はタダだが、時間制限がある。夜八時から十時の間だ。そろそろ行かねーと入れなくなるぞ」\n　時計を見たら、いつの間にか八時半を過ぎていた。\n　外を見たら、いつの間にか日がとっぷりと暮れていた。\n「……あれえ？　さっきまで明るかったような」\n\n「あぁ～～～……上京して一日目がこれかよぉ」\n銭湯の湯船に浸かり、ひとしきり嘆く。どうやら少し寂れ気味のようで、俺とニケのおっさんの他には親子連れが一組と数人の爺さんだけだった。\nまあ静かなのは悪くないんじゃないの。なにより広い。さすがにウチ自慢の大浴場に比べるとつつましいが、毎日入るならこのくらいがちょうどいい。\n「悪かねーだろ。たびに出たその日に宿にありつけたんだ」\n「……おっさん、実はホームレスの経験あったり？」\n「ま、当たらずとも遠からずだな」\nまじかよ。\n「日本……いや、この世界は恵まれてるほうだぜ。まあ、だからダラダラ居座ってるんだが」\n「……もしかして外国生まれ？」\n「当たらずとも遠からずだ。一言で言うなら、ここより物騒なところの出身だ」\nここって日本のことだよな。なら……紛争地帯とかか？\nあまり話したくなさそうだったので、深くは聞かないことにした。\n「でもおっさんの出身と俺の失敗は関係ねーです」\n「素直に聞けよ……それと、あらかじめ言っておくことがある」\n「なんすか。さっき言ってくれたらよかったのに」\n「寮じゃ言えないこともあるのさ……少年、おユキちゃんはやめとけ」\n「ぶっ！」\n　あまりにビビりすぎて、体がお湯に沈んでしまった。\n　溺れそうになった俺を引っ張りあげ、おっさんはあくまで真面目な顔で続ける。\n「いいか、親切心で言ってるんだからな」\n「どういうことですか？　もしかして性格に難あり？」\n「あの子を見てそう思ったのか？」\n　首をふる。\n「そうだ。いい子だよ、あの子は」\n「じゃあなんすか。父親気取りで、どこぞの馬の骨に娘はやらんとかですか。てか俺、まだ彼女に会ったばかりなんですけど」\n「別にお前がおユキちゃんに興味ないならいいんだよ。だがあの子……まあ、すぐわかると思うが……危なっかしくてな」\n　おっさんの言葉に、さっきの言葉を思い出す。\n　確か彼女は、一人で大学に行くことを止められていた。\n　超弩級の方向音痴なのか？　でもそれは俺とは関係ないしな。\n「父親気取りってのはまあ、当たらずとも遠からずだ。彼女になんかあったら、いろんな人に申し訳がたたん。彼女はいろんなしがらみを乗り越えて、あの寮にいる。そのどれか一つでもがその気になったら、彼女は即日、消えちまうだろう」\n「……それは困る」\n「お前さんがちょっかいかければ、結構な連中がその気になる」\n「複雑な家庭なんですか？」\n「庶民には想像もつかない家庭だ」\nつまり、彼女はいいとこのご令嬢、ということなのだろうか。ならなぜあんなボロい寮に住んでいるのだろう。社会経験を積ませるにしたって、イマドキの女子が一人暮らしするならオートロック付きのマンションが当たり前だ。\nおっさんの言葉を額面通りに受け取っていいものか。\n「それと、金についてだが」\n「貸してくれるんすか」\n「言っただろ。俺はすかんぴんだ……だがたまに仕事が入る」\n　そしておっさんは、先程以上の真剣な顔で、俺の方を見た。\n「もうほかに手がないときは俺の仕事を手伝わせてやる。もちろん報酬も出す。いいな。他にバイトとか、借金とか、そういうのが全部ダメだったときは、そのことを思い出せ」\n「……おっさん」\n「そのおっさんって呼び方はやめろ」\n「なんでこんなに、よくしてくれるんですか」\n「敬語もやめろ……せっかくの入居者だ。縁ができたんなら、ちょっとは切れねえようにするさ」\n「……おっさん！」\n「だからその呼び方はやめろ！」\n\n心も体もあったまって、俺は寮へと戻った。おっさんのお陰で、明日から頑張る気になれた。\nいいおっさんだ。なんか、帰るときに通り過ぎる住民に避けられてたような気がするが。\n「ああ、太郎さん。お風呂帰りですか？」\n　玄関にはおユキちゃんがいた。\n「さっそくもらって来ました。あのお湯にただで入れるなんて、ツイてるなあ」\n「ふふ。気に入ってもらえたみたいでよかったです」\n　彼女の手には風呂桶とタオルが入っていた。察するに、彼女もこれから銭湯に行くのだろう。\n「夏子さんの準備を待ってるんです」\n　むむ……おユキちゃんと夏子さんが風呂に……いやいや、失礼なことを考えるな。キモいぞ。\n「なんだか……立ち直ったようで、よかったです。さっきはとっても落ち込んでたから」\n「そりゃあ、落ち込んでたけど……でもニケのおっさ……ニケさんから、いざとなったら仕事の手伝いをさせてくれるって言われて」\nカラン、と風呂桶が落ちた。\n「令和の今にこんな人情があるなんて……あれ、どうしたの」\n「太郎さん！　駄目です！」\n　ぐいと顔を寄せて、しかも俺のシャツの襟まで掴んで……いやいやいや！　そんなに近づかれるといろいろ困るんだが！\n「絶対に断ってください、いいですね！」\n「ど、どうしてもバイトが見つからなかったときって言ってたから……」\n「ニケさんのお仕事をされるくらいなら私がお貸しします！　どうか……ニケさんの仕事だけは……」\n「ええと……あの人、なんの仕事してんの？」\n「私が言うわけにはいかないのですが……その、とても危険なものだとだけ」\nまさかあのオッサン、ヤクザじゃないだろうな。\n仕事ってのはどこかにカチコミに行ったり、鉄砲玉として「タマぁとったる！」とか叫びながら白昼堂々誰かを襲うようなことじゃないだろうな。\n「お願い……死んでほしくないんです」\n　ヤバい、これは確定だ。\n「わ、わかった……あの、それならできるだけおっさんにはかかわらないほうがいいかな」\n「え？　どうして？　いい人ですよ。彼の仕事さえしなければ、普通のおじさんですから」\nなんか腑に落ちないな！　反社とはかかわらないのが現代社会ってもんじゃないのか？\nそのうち夏子さんが出てきて、おユキちゃんは銭湯に出ていった。\n\n……そういえば、ここの住民は、なんで俺のことを知ってたんだ？　大家から聞いたっていうけど、プライバシーに関することをそんな簡単にバラすものか？\nそれに他にも……違和感がある気がするんだが……\nいや、とりあえず仕事だ。\n今日の夜は、求人情報誌を隅から隅までチェックしよう。\nなあに、バイトなんて簡単さ。すぐに見つかるはずだ。\nそして、おユキちゃんと大学見学に行こう。\n"}, {"n": 4, "title": "バイトなし、希望なし？", "text": "バイトなし、希望なし？\n次の朝、俺はまた寮の廊下に倒れていた。共同電話の真下で。\n「太郎さん！」\nおユキちゃんの声が響いて、彼女が駆け寄ってきた。心配そうな表情――もうすっかり見慣れてしまった光景だ。\n「大丈夫ですか？　何があったんですか？」\n「もう……もうここで死なせてくれ」俺はうめきながら、力なく腕を上げた。\n「ダメです！」彼女は俺のそばにしゃがみ込み、白い眉をひそめた。「バイト探しで何かあったんですか？」\n「ああ……バイト探しなら、大失敗だよ」\n彼女は目を瞬かせた。「え……どういうことですか？」\n俺はため息をついて起き上がり、顔をこすった。「ああ。どこに電話しても住所を聞かれて、『サクラサク寮』って言った瞬間に終了だ。『もう決まっちゃって』と誤魔化すところもあれば、そのまま電話を切るところもあった」\nおユキちゃんは本気で不思議そうな顔をした。「どうしてそんなことで？」\n一瞬迷って、思い切って聞いてみることにした。「なあ……昨日、坂を登ってるとき、近所の人たちに変な目で見られたんだ。今朝のこれもそうだし。……もしかして、ニケさんのせいなのかな？」\n「ニケさんのせい？」彼女は小首を傾げて繰り返した。\n「ほら、あの……」俺はまた言葉を濁してから、小声でぼそっと言った。「あの人、ヤクザだから……」\n「ヤクザ？」彼女はきょとんとして繰り返した。\n俺は目を瞬かせた。\n待て。おユキちゃん、ヤクザって言葉を知らないのか？\nレンガで殴られたような衝撃とともに理解した。道理でこんなに世間知らずなわけだ。道理で、ニケへの俺の疑いに普通の反応が返ってこなかったわけだ。彼女、それほどまでに箱入りだったんだ。\n「ああ」俺は一人で納得して頷いた。「そういうことか」\n「何がですか？」彼女はさらに首を傾げた。\n「なんでもない、なんでもない」俺は手を振って誤魔化した。ヤクザを映画の中の存在だと思っているおユキちゃんに、反社会的勢力の概念を説明しても仕方ないだろう。\nすると彼女は突然ぱっと顔を輝かせた。「あ！　じゃあ今日、大学見学に行きましょう！」\n「は？」\n「気分転換です！　バイトがうまくいかないときに無理をしても、ストレスが溜まるだけですよ。さあ、キャンパスを見て回りましょう！」\n「いや……」俺は首の後ろを掻いた。「今、電車賃すらないんだけど」\n彼女は頬を膨らませた。「昨日言ったじゃないですか。案内してもらうんですから、電車代は私が出します」\n俺が反論する前に、彼女はくるりと向きを変えて、支度のために自分の部屋へ戻っていった。\nドアの向こうに消える彼女を見送りながら、俺はなんだか複雑な気分だった。一刻も早くバイトを見つけて、借りは返さなきゃいけない。だけど……\n可愛い女の子とキャンパスを歩く？\nああ、それを断る理由はなかった。\nぼんやりしていると、夏子さんが部屋から顔を出した。「太郎くん、朝ごはんは？」\n「あ、そうだ！　その前に――」俺はドア枠に寄りかかって、声を潜めた。「聞きたいことがあるんです」\n「なあに？」\n「どうしてニケみたいなヤクザが、ここに住んでいられるんですか？」\n夏子さんは目を瞬かせた。そして、驚いたことに、吹き出した。\n「何ですか？」俺は眉をひそめた。「何がおかしいんですか？」\n「あらあら、太郎くん、本気でニケさんがヤクザだと思ってるの？」彼女は口に手を当ててクスクス笑った。「久しぶりに聞いたわ、そんな面白いこと」\n「本気ですよ！　あの人のせいでバイトが決まらないんです！　証拠を見つけたら、絶対に告発してこの寮から追い出してやりますから！」\n彼女の表情が和らいだ。「太郎くん。断言するけど、ニケさんはヤクザじゃないわ。ちょっとガサツなところはあるけど、いい人よ」\n「脅されて口止めされてるんじゃないですか？」俺は目を細めた。「助けが必要なら二回瞬きしてください」\n「あら、面白い子ね」彼女は笑って首を振った。「でも本当に、何か大きな勘違いをしてるわよ」\nはいはい。そのうち真相を突き止めてやる。今はひとまず流して、大学見学の支度をした。\n\n電車での移動は平穏だった――おユキちゃんが改札に挟まれかけたこと以外は。\n「おユキちゃん、急いで！　挟まれるよ！」\n「あっ！　もっと長く開いてると思ってました！」\n俺はため息をつき、改札が閉まる前に彼女を引っ張り出した。\n「わかりません」彼女は、まるで個人的に恨みでもあるみたいに機械を睨みながらぼやいた。「どうしてあんなに攻撃的なんですか？」\n「攻撃的じゃない。あれは……効率的ってやつだ」\n彼女はまったく納得していない顔だった。\nそれ以上の事件もなく、武蔵大に到着した。キャンパスは広かった――想像していたよりずっと。広々とした空間、近代的な建物、行き交う学生たち。爽やかな風が木々を揺らし、遠くから聞こえる学生たちのおしゃべりが、場所全体に活気を与えていた。\n「わあ……」隣でおユキちゃんが目を見開いて囁いた。\n「大学を見るのは初めて？」\n彼女はゆっくり頷いた。「本では読んだことがあります。でも、実際に来ると違いますね。こんなに……壮大で、開けていて」\n「ああ、なかなかいいキャンパスだよな」\n彼女は、その空気を吸い込もうとするみたいに深呼吸した。「私、本当にここで学ぶんですね……」\n俺は彼女を横目で見た。「……本当に来たかったんだな」\n彼女の指が、バッグの紐をぎゅっと握った。「はい。何よりも」\nその言い方が、なんだか引っかかった。ただのワクワクじゃない――もっと深い何か。彼女が口に出さない何かがあった。\n「なあ」俺は切り出した。「前から聞きたかったんだけど――どうして一人でここに来るのを止められてたの？」\n彼女はハッとして目を瞬かせた。「あ、それは……」\n一瞬ためらってから、彼女は笑った。でも目は笑っていなかった。「みんな心配性なんです。私が迷子になったり、悪いことが起きたりするんじゃないかって」\n言い訳に聞こえた。しかも、かなり苦しい言い訳に。\nでも、それ以上追及する前に、彼女が俺の腕を掴んだ。「見て回りましょう！」\n二人でキャンパスを回り、いろんな建物を見て回った。講義棟、図書館、学食。\n「ここが学生の食べるところですか？」おユキちゃんが中を覗き込んで聞いた。\n「ああ。悪くないよ。食べ放題のところもあるくらいだ」\n彼女の目が輝いた。「すごいです！」\n俺は笑った。「でも、ペース配分が大事だよ。新入生はみんな食べすぎて後で後悔するんだ」\n彼女は、まるで重大な知恵を授かったみたいに真剣に頷いた。\n掲示板の前を通りかかったとき、彼女が突然立ち止まった。\n「見てください！　サークルです！」\n視線を追うと、掲示板はチラシで埋め尽くされていた――音楽系サークル、スポーツのチーム、文化系の団体。\n「入るつもりなの？」と聞いた。\n「入りたいです！　この世界のすべてを経験したいんです！」\nこの世界？　俺は眉をひそめたが、彼女はもう先に進んで、どのサークルが面白そうか興奮気味に喋っていた。\nその後二時間ほどキャンパスをぶらつき、通り過ぎる学生たちのおしゃべりや笑い声を眺めた。一瞬、俺はすべての悩みを忘れた。なくした金のことも、バイト探しのことも、寮の奇妙な空気のことも。\n上京してから初めて、物事が……普通に感じられた。\n帰る頃には、日が傾き始めていた。金色の光が静かな通りに長い影を落とし、珍しく、俺は自分を完全な負け犬だとは思わなかった。\nもちろん、バイトはまだない。金もない。この先どう生きていくかもわからない。\nでも、今日は楽しかった。\nおユキちゃんも楽しそうだった。なぜかそれだけで、なんとかなる気がした。\nその気持ちは、寮に着くまでのことだった。\n角を曲がった瞬間、低く、大地を震わせる咆哮が空に響いたからだ。\n俺は凍りついた。\nおユキちゃんが息を呑んだ。\nそして、見た――サクラサク寮の上に覆いかぶさるように、黄昏の空へ翼を広げた姿を。\n巨大で、間違えようのないシルエット。\nあれは――まるで――ドラゴン？\n"}, {"n": 5, "title": "どこでもない場所への扉", "text": "**エピソード5：どこでもない場所への扉**\n\n俺は激しい頭痛とともに目を覚ました。\n\n……何が起こった？\n\nぼんやりした頭で、断片的な記憶をつなぎ合わせながら身を起こす。枕元の時計を見ると、夜の9時。長く眠っていたわけじゃない。でも、何かがおかしい。\n\nこめかみを押さえながら思い出そうとする——屋根の上に何かいた。月明かりに浮かぶ巨大なシルエット。まるで……ドラゴン？ いや、そんなはずはない。きっと疲れて幻覚でも見たんだ。\n\nまさかと思いながら、俺はふらふらと窓際に歩き、外を覗いた。屋根の上——何もない。ただの静かな夜空だった。\n\n「夢……だよな」と呟きながら、こめかみを擦る。「俺が疲れすぎてただけだ……」\n\nだが、寮の異様な静けさがどうにも引っかかった。まだみんなが寝てしまうような時間じゃないはずだ。テレビの微かな音、床の軋む音、あるいはナイキが何かをぼやく声とか——でも、何もない。\n\nここの住人がみんな揃って寝付きがいい可能性もあるけど、とにかく…なんだか薄気味悪いな。\n\n俺は廊下へ出た。階段が軋む音がやけに響く。ナツコさんの部屋のドアをノックした。\n\n……無反応。\n\n銭湯にでも行ってるのか？ 仕方なく、ニケの部屋のドアを叩く。\n\n……沈黙。\n\n出ない。やっぱり銭湯に行ったのか？\n\n嫌な予感が背筋を這い上がる。「誰かいるか？」と声をかける。\n\n返事はなかった。\n\n胸が締めつけられる。この静けさは単なる違和感じゃない——何かが「おかしい」。\n\n夏子さんもニケも銭湯に行ってなんかいない。そんな予感がする。\n\nオユキちゃんの部屋の前に立ち、躊躇しながらもノックする。\n\n……やはり何もない。\n\nくそ、いったいどうなってるんだ？\n\nこの寮の住人たちは最初からどこかおかしかった。近所の人々の異様な視線。初めて会ったはずの寮の住人たちが、まるで俺のことを前から知っていたような態度。あやふやな説明、曖昧な警告——誰も詳しいことを教えてくれない。そして昨日のオユキちゃんの反応——ニケの仕事に関する話をしたときの、あの過剰な反応もそうだし、彼女がびっくりするほど世間知らずなことも、今となっては「普通じゃない」ように思えてくる。\n\nこれまで無視しようと思っていたいろいろな違和感が、今は無視できない。\n\nやはり俺はまだ、この寮の住人として認識されていない。\n\n「……この寮、絶対おかしい」\n\n俺は低く呟いた。\n\nそのとき——気づいた。\n\n103号室のドアが、少し開いている。\n\n冷たい悪寒が背筋を駆け上がる。\n\nニケは、あの部屋には近づくなと言っていた。\n\nだが、今——開いている。\n\n俺は戸惑った。すぐにでもここから立ち去ったほうがいいはずだった。でも、その瞬間——中からかすかな、苦しそうなうめき声が聞こえた。\n\n誰かが中にいる。\n\n喉を鳴らし、唾を飲み込む。「……誰かいるのか？」\n\n返事はない。\n\n俺はドア枠に手をかけ、中へ足を踏み入れた。\n\n暗がりの中、畳の上に、少女が倒れていた。まだ小学生くらいの小さな子だ。肌は青白く、額には汗が滲んでいる。ひどい熱だ。\n\n「クソ……」俺は呟き、彼女のそばに膝をつく。「おい、大丈夫か？」\n\n少女は微かにうめいたが、ほとんど意識がないようだった。\n\nニケは「病気だ」と言っていたが、これは……まずい。ただでさえ体調が悪いのに、布団も何もないなんて。こんな状態じゃ悪化する一方だ。\n\n「ちょっと待ってろ」俺は押し入れに目を向けた。ここに予備の布団があるはずだ。\n\n戸を開けようとした、そのとき。\n\n「……だめだ」と、少女がかすれた声で呟いた。\n\n「え？」\n\n「そこは……開けるな……」\n\n彼女は明らかにうわ言を言っているだけだった。俺は気にせず、押し入れを開けた。\n\nだが、そこに布団はなかった。\n\n代わりに——扉があった。\n\n場違いな、異様な扉だった。濃い木材に彫られた複雑な模様。絡み合うような竜の彫刻。古びた真鍮のドアノブ。\n\n「なんだこれ……？」\n\n「開けたら……戻れなくなる……」\n\n少女の声が微かに響いた。\n\n何を言っているのか、まるで理解できなかった。\n\n俺は扉を見つめる。なぜか、全身の毛が逆立つ感覚がした。彫刻が淡い光の中で蠢くように見える。周囲の空気が、異様に重く、濃密に感じた。\n\n——開けてはいけない。\n\n本能が叫ぶ。\n\n絶対に開けるべきではない。こんな押し入れの中に、ドアだって？　命を賭けてもいいが、ロクなものじゃないはずだ。\n\nだが、この扉の向こうには——これまでのすべての異常の答えがある気がする。\n\n俺がこの寮の住人になれない理由が、そこにはある気がする。\n\nだから俺は——それを確かめたいと思った。その結果、取り返しがつかないことになってしまうかもしれないが——そのときは、その時だ。引っ越すなり、実家に帰るなり、どうとでもなれ。\n\n俺はドアノブを掴んだ。\n\n瞬間、扉は勝手に開いた。\n\n眩い光が視界を覆う。\n\n強烈な力が俺を引きずり込む。\n\n抵抗する間もなく——俺は、その向こうへと飲み込まれた。\n\n###\n\n俺は地面に叩きつけられた。\n\n「っ……ぐ……」\n\n全身が痛む。乾いた土、ざらざらとした感触。風が吹きつける。\n\n俺は、どこに——？\n\n痛む体を起こし、ゆっくりと辺りを見渡す。\n\nそこは、果てしなく続く丘だった。空は淡い紫色に染まり、風がやけに澄んでいる。嗅いだことのない、不思議な匂いが漂う。\n\nゆっくりと振り返る。\n\n遠くに、まるでゲームやアニメのようなファンタジーの城がそびえていた。高い塔、巨大な城壁、風にはためく旗。\n\n反対側には、真っ赤に燃える火山。\n\n東京はどこにもない。\n\n寮も、扉も——消えていた。\n\n「……どこだよ、ここ……」\n"}], "watch_words": [{"term": "少女", "note": "第1〜2話では名前が明かされる前の雪子を指しますが、第5話では倒れていた小さな子（別人物）を指します。別名に登録すると別人まで誤検出されます。"}]};
+
+      const $app = document.getElementById("app");
+
+      function esc(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      /* 簡易 Markdown：段落と **太字** のみ */
+      function mdHTML(text) {
+        if (!text) return "";
+        return text.split(/\n\s*\n/).map(function (p) {
+          const inner = esc(p.trim()).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+          return "<p>" + inner + "</p>";
+        }).join("");
+      }
+      function fmt(n) { return n.toLocaleString("ja-JP"); }
+
+      /* ===== 検出エンジン：本名＋別名の文字列照合（最長一致） ===== */
+      function termsOf(c) {
+        const t = [];
+        if (c.full_name) t.push(c.full_name);
+        t.push(c.name);
+        (c.aliases || []).forEach(function (a) { t.push(a); });
+        return Array.from(new Set(t)).sort(function (a, b) { return b.length - a.length; });
+      }
+      function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+      /* text を走査し、登録語（reg）と候補語（cand）の出現を数える */
+      function scanText(text, regTokens, candTokens) {
+        const all = regTokens.concat(candTokens).sort(function (a, b) { return b.term.length - a.term.length; });
+        const counts = {};
+        all.forEach(function (t) { counts[t.term] = 0; });
+        let firstIdx = -1, firstTerm = null;
+        if (all.length) {
+          const re = new RegExp(all.map(function (t) { return escapeRe(t.term); }).join("|"), "g");
+          let m;
+          while ((m = re.exec(text)) !== null) {
+            counts[m[0]] += 1;
+            if (firstIdx < 0) { firstIdx = m.index; firstTerm = m[0]; }
+          }
+        }
+        return { counts: counts, firstIdx: firstIdx, firstTerm: firstTerm };
+      }
+
+      /* キャラ × 話 の検出結果を組み立てる */
+      const CHARS = DATA.characters;
+      const EPS = DATA.episodes;
+      const charByName = {};
+      CHARS.forEach(function (c) { charByName[c.name] = c; });
+
+      CHARS.forEach(function (c) {
+        c._terms = termsOf(c);
+        c._regTokens = c._terms.map(function (t) { return { term: t, char: c.name, kind: "reg" }; });
+        c._candTokens = (c.candidates || []).map(function (cd) { return { term: cd.term, char: c.name, kind: "cand" }; });
+        c._per = {};   /* ep.n -> {total, counts, candTotal, candCounts, firstIdx, firstTerm} */
+        c._total = 0; c._candTotal = 0; c._firstEp = null;
+        EPS.forEach(function (ep) {
+          const r = scanText(ep.text, c._regTokens, c._candTokens);
+          let total = 0, candTotal = 0;
+          c._terms.forEach(function (t) { total += r.counts[t] || 0; });
+          (c.candidates || []).forEach(function (cd) { candTotal += r.counts[cd.term] || 0; });
+          c._per[ep.n] = { total: total, counts: r.counts, candTotal: candTotal, firstIdx: r.firstIdx, firstTerm: r.firstTerm };
+          c._total += total; c._candTotal += candTotal;
+          if (total > 0 && c._firstEp === null) c._firstEp = ep.n;
+        });
+        c._ore = {};   /* 語り手用：「俺」の出現数 */
+        EPS.forEach(function (ep) { c._ore[ep.n] = (ep.text.match(/俺/g) || []).length; });
+      });
+
+      /* 一般名詞ウォッチ（別名に登録すると誤検出する語） */
+      const WATCH = (DATA.watch_words || []).map(function (w) {
+        const per = {};
+        let total = 0;
+        EPS.forEach(function (ep) {
+          const n = (ep.text.match(new RegExp(escapeRe(w.term), "g")) || []).length;
+          per[ep.n] = n; total += n;
+        });
+        return { term: w.term, note: w.note, per: per, total: total };
+      });
+
+      const TOTAL_CHARS = EPS.reduce(function (s, e) { return s + e.text.length; }, 0);
+      const TOTAL_MENTIONS = CHARS.reduce(function (s, c) { return s + c._total; }, 0);
+
+      function epLabel(ep) { return "第" + ep.n + "話"; }
+      function excerpt(ep, idx, termLen, radius) {
+        radius = radius || 46;
+        const t = ep.text;
+        const s = Math.max(0, idx - radius), e = Math.min(t.length, idx + termLen + radius);
+        let out = t.slice(s, e).replace(/\s+/g, " ");
+        const rel = idx - s;
+        const before = out.slice(0, rel), hit = out.slice(rel, rel + termLen), after = out.slice(rel + termLen);
+        return (s > 0 ? "…" : "") + esc(before) + "<mark style=\"--mc:" + "var(--cc)\">" + esc(hit) + "</mark>" + esc(after) + (e < t.length ? "…" : "");
+      }
+
+      /* ===== 共通パーツ ===== */
+      function breakdownChips(c, per) {
+        const items = [];
+        c._terms.forEach(function (t) {
+          const n = per.counts[t] || 0;
+          if (n > 0) items.push("<span class=\"term-tag\">" + esc(t) + "<span class=\"n\">×" + n + "</span></span>");
+        });
+        (c.candidates || []).forEach(function (cd) {
+          const n = per.counts[cd.term] || 0;
+          if (n > 0) items.push("<span class=\"term-tag\" title=\"未登録の表記ゆれ候補\">" + esc(cd.term) + "（候補）<span class=\"n\">×" + n + "</span></span>");
+        });
+        return items.length ? "<span class=\"breakdown\">" + items.join("") + "</span>" : "<span style=\"color:var(--ink-3)\">—</span>";
+      }
+      function attrChips(c) {
+        const chips = Object.keys(c.attributes || {}).map(function (k) {
+          return "<span class=\"chip\">" + esc(k) + "：<b>" + esc(c.attributes[k]) + "</b></span>";
+        });
+        return chips.length ? "<div class=\"attr-chips\">" + chips.join("") + "</div>" : "";
+      }
+
+      /* ===== トップ ===== */
+      function viewHome() {
+        const charCards = CHARS.map(function (c) {
+          const first = c.narrator
+            ? "語り手として第1話から登場"
+            : (c._firstEp ? "初登場（名前の初出）：第" + c._firstEp + "話" : "名前の言及なし");
+          return "<a class=\"char-card\" style=\"--cc:var(--c-" + c.color_key + ")\" href=\"#/character/" + encodeURIComponent(c.name) + "\">" +
+            "<span class=\"name-row\"><span class=\"cname\">" + esc(c.name) + "</span>" +
+            (c.full_name ? "<span class=\"cfull\">" + esc(c.full_name) + "</span>" : "") +
+            (c.narrator ? "<span class=\"narr-badge\">語り手</span>" : "") + "</span>" +
+            "<span class=\"summary\" style=\"display:-webkit-box\">" + esc((c.sections.Summary || "").split("\n")[0]) + "</span>" +
+            attrChips(c) +
+            "<span class=\"card-foot\"><span>言及 <span class=\"big\">" + c._total + "</span> 回</span><span>" + first + "</span></span>" +
+            "</a>";
+        }).join("");
+
+        const epRows = EPS.map(function (ep) {
+          const chips = CHARS.map(function (c) {
+            const per = c._per[ep.n];
+            if (c.narrator && per.total === 0) {
+              return "<span class=\"mchip hit\" style=\"--mc:var(--c-" + c.color_key + ")\"><b>" + esc(c.name) + "</b>：語り手として登場</span>";
+            }
+            if (per.total > 0) {
+              return "<span class=\"mchip hit\" style=\"--mc:var(--c-" + c.color_key + ")\"><b>" + esc(c.name) + "</b> <span class=\"cnt\">" + per.total + "回</span></span>";
+            }
+            return "<span class=\"mchip\">" + esc(c.name) + "：言及なし</span>";
+          }).join("");
+          return "<a class=\"ep-row\" href=\"#/episode/" + ep.n + "\">" +
+            "<span class=\"ep-head\"><span class=\"ep-no\">" + epLabel(ep) + "</span>" +
+            (ep.title ? "<span class=\"ep-title\">" + esc(ep.title) + "</span>" : "<span class=\"ep-title none\">（原稿に話タイトルなし）</span>") +
+            "<span class=\"ep-meta\">" + fmt(ep.text.length) + "字</span></span>" +
+            "<span class=\"mention-chips\">" + chips + "</span></a>";
+        }).join("");
+
+        const watch = WATCH[0];
+        const watchLine = watch ? EPS.filter(function (ep) { return watch.per[ep.n] > 0; }).map(function (ep) {
+          return epLabel(ep) + " " + watch.per[ep.n] + "回";
+        }).join("／") : "";
+
+        $app.innerHTML =
+          "<h1 class=\"page-title serif\">サクラサク寮歌 ワールドWiki</h1>" +
+          "<p class=\"lead\">創作小説「サクラサク寮歌 〜お隣の異世界人〜」の世界設定 Wiki 試作。キャラクターの属性と解説は <strong>Markdown ファイルを正本</strong>として保持し、各話の原稿テキストを<strong>本名＋別名の文字列照合</strong>で走査して、誰がどの話で何回言及されたかを自動で集計しています。</p>" +
+          "<div class=\"stats\">" +
+            "<div class=\"stat\"><div class=\"num\">" + EPS.length + "</div><div class=\"lbl\">収録話数（EP1〜EP5）</div></div>" +
+            "<div class=\"stat\"><div class=\"num\">" + CHARS.length + "</div><div class=\"lbl\">キャラクター</div></div>" +
+            "<div class=\"stat\"><div class=\"num\">" + fmt(TOTAL_CHARS) + "</div><div class=\"lbl\">原稿の総文字数</div></div>" +
+            "<div class=\"stat\"><div class=\"num\">" + TOTAL_MENTIONS + "</div><div class=\"lbl\">検出された言及の総数</div></div>" +
+          "</div>" +
+
+          "<h2 class=\"section-title\" id=\"chars\">キャラクター <span class=\"note\">タイトルは漢字のみでも登録可</span></h2>" +
+          "<div class=\"char-grid\">" + charCards + "</div>" +
+
+          "<h2 class=\"section-title\" id=\"eps\">話一覧 <span class=\"note\">各話から言及キャラを逆引きできます</span></h2>" +
+          "<div class=\"ep-list\">" + epRows + "</div>" +
+
+          "<h2 class=\"section-title\">検出の仕組みと注意</h2>" +
+          "<div class=\"memo-box\">" +
+            "<h3>「言及」と「登場」の違い</h3>" +
+            "<p>自動検出が数えるのは、原稿の中に名前（本名・フルネーム・登録済み別名）が出てくる回数＝<strong>言及</strong>です。名前が出なくても登場していることはあります（第1話は誰の名前も自己紹介されないまま物語が進みます）。実際の登場は各キャラクターのデータに <code>manual_appearances</code> を登録して上書きでき、登録がある場合はそちらを優先表示します（現在は全員未登録）。</p>" +
+            "<h3>語り手の扱い</h3>" +
+            "<p>太郎は一人称の語り手で、全編を「俺」として語ります。名前で呼ばれるのは他人のセリフの中だけなので、言及回数は登場量を表しません。各話では「語り手として登場」と別枠で示します。</p>" +
+            (watch ? "<h3>一般名詞の誤検出に注意：「" + esc(watch.term) + "」</h3>" +
+            "<p>「" + esc(watch.term) + "」は別名に<strong>登録していません</strong>。" + esc(watch.note) + " 原稿中の出現は " + watchLine + " で、合計 " + watch.total + " 回です。</p>" : "") +
+            "<h3>表記ゆれ（未登録の候補）</h3>" +
+            "<p>原稿には登録済み別名と表記がずれる呼び名もあり、文字列照合では拾えません。見つかった候補は各キャラクターページに「候補」として分けて表示し、言及回数には合算していません。正本の Markdown に別名として登録すれば、次回から正式に数えられます。</p>" +
+            "<h3>データ形式と今後の拡張</h3>" +
+            "<p>1キャラクター＝1 Markdown ファイル（フロントマターに属性・別名・語り手フラグ・手動補正、本文に Summary／Appearance／History）。そのまま Obsidian の Vault にコピーして編集できる形です。属性には有効期間（<code>valid_from</code>／<code>valid_to</code>）の欄を用意してあり、物語の進行時点ごとに属性が変わる「時点指定表示」は今後の拡張として設計に残しています。</p>" +
+          "</div>";
+        window.scrollTo(0, 0);
+      }
+
+      /* ===== キャラクターページ ===== */
+      function viewCharacter(name) {
+        const c = charByName[name];
+        if (!c) { viewHome(); return; }
+        const cc = "var(--c-" + c.color_key + ")";
+
+        /* 属性表 */
+        let ibRows = "";
+        if (c.full_name) ibRows += "<tr><th>本名</th><td>" + esc(c.full_name) + "</td></tr>";
+        Object.keys(c.attributes || {}).forEach(function (k) {
+          ibRows += "<tr><th>" + esc(k) + "</th><td>" + esc(c.attributes[k]) + "</td></tr>";
+        });
+        if (c.narrator) ibRows += "<tr><th>語り手</th><td>一人称の語り手（全話）</td></tr>";
+        ibRows += "<tr><th>別名</th><td>" + (c.aliases && c.aliases.length
+          ? "<span class=\"terms\">" + c.aliases.map(function (a) { return "<span class=\"term-tag\">" + esc(a) + "</span>"; }).join("") + "</span>"
+          : "（なし）") + "</td></tr>";
+        const termTags = c._terms.map(function (t) {
+          let tot = 0; EPS.forEach(function (ep) { tot += c._per[ep.n].counts[t] || 0; });
+          return "<span class=\"term-tag" + (tot === 0 ? " zero" : "") + "\">" + esc(t) + "<span class=\"n\">全" + tot + "回</span></span>";
+        }).join("");
+        ibRows += "<tr><th>照合語</th><td><span class=\"terms\">" + termTags + "</span></td></tr>";
+        const manual = c.manual_appearances || [];
+        ibRows += "<tr><th>手動補正</th><td>" + (manual.length
+          ? manual.map(function (n) { return "第" + n + "話"; }).join("、") + " を登場として登録"
+          : "未登録（自動検出の言及のみで表示）") + "</td></tr>";
+        ibRows += "<tr><th>有効期間</th><td>" + ((c.valid_from || c.valid_to)
+          ? esc(c.valid_from || "開始") + " 〜 " + esc(c.valid_to || "現在")
+          : "指定なし（全期間）") + "</td></tr>";
+
+        /* 語り手バナー */
+        let narratorHTML = "";
+        if (c.narrator) {
+          const oreCells = EPS.map(function (ep) {
+            return "<span class=\"ore-cell\">" + epLabel(ep) + "　「俺」<b>" + c._ore[ep.n] + "</b>回</span>";
+          }).join("");
+          narratorHTML = "<div class=\"narrator-banner\"><div class=\"nb-title\">語り手（一人称）</div>" +
+            "<p>太郎は本作の語り手で、全話を通じて「俺」として登場します。下の言及回数は他人から名前で呼ばれた回数だけを数えたもので、登場量そのものではありません。</p>" +
+            "<div class=\"ore-table\">" + oreCells + "</div></div>";
+        }
+
+        /* 言及テーブル */
+        const rows = EPS.map(function (ep) {
+          const per = c._per[ep.n];
+          const isFirst = c._firstEp === ep.n;
+          const narratorOnly = c.narrator && per.total === 0;
+          return "<tr" + (per.total === 0 ? " class=\"no-hit\"" : "") + ">" +
+            "<td class=\"ep-cell\"><a href=\"#/episode/" + ep.n + "\">" + epLabel(ep) + "</a>" +
+            (ep.title ? "<br><span style=\"font-weight:400;font-size:12.5px;color:var(--ink-2)\">" + esc(ep.title) + "</span>" : "") +
+            (isFirst ? "<span class=\"first-badge\">初出</span>" : "") + "</td>" +
+            (per.total > 0
+              ? "<td class=\"cnt-cell\">" + per.total + "<span style=\"font-size:12px;font-weight:600\"> 回</span></td>"
+              : "<td class=\"cnt-cell zero\">" + (narratorOnly ? "言及なし（語り手として登場）" : "言及なし") + "</td>") +
+            "<td>" + breakdownChips(c, per) + "</td></tr>";
+        }).join("");
+
+        let firstExcerpt = "";
+        if (c._firstEp !== null) {
+          const ep = EPS[c._firstEp - 1], per = c._per[c._firstEp];
+          firstExcerpt = "<div class=\"excerpt\" style=\"--cc:" + cc + "\"><span class=\"ex-label\">初出の文脈（" + epLabel(ep) + "）</span>" +
+            excerpt(ep, per.firstIdx, per.firstTerm.length) + "</div>";
+        }
+
+        /* 注意・候補ボックス */
+        let boxes = "";
+        (c.candidates || []).forEach(function (cd) {
+          const perRows = EPS.map(function (ep) {
+            const n = c._per[ep.n].counts[cd.term] || 0;
+            return n > 0 ? "<tr><td>" + epLabel(ep) + "</td><td>" + n + " 回</td></tr>" : "";
+          }).join("");
+          const tot = EPS.reduce(function (s, ep) { return s + (c._per[ep.n].counts[cd.term] || 0); }, 0);
+          if (tot > 0) {
+            boxes += "<div class=\"cand-box\"><div class=\"wb-title\">表記ゆれ候補：「" + esc(cd.term) + "」は別名に未登録です</div>" +
+              "<p>" + esc(cd.note) + " 現在の言及回数には含まれていません。正本 Markdown の <code>aliases</code> に追加すると正式な照合語になります。</p>" +
+              "<table>" + perRows + "</table></div>";
+          }
+        });
+        (c.watch_notes || []).forEach(function (wn) {
+          const w = WATCH.filter(function (x) { return x.term === wn.term; })[0];
+          if (!w) return;
+          const line = EPS.filter(function (ep) { return w.per[ep.n] > 0; }).map(function (ep) {
+            return epLabel(ep) + " " + w.per[ep.n] + "回";
+          }).join("／");
+          boxes += "<div class=\"warn-box\"><div class=\"wb-title\">誤検出に注意：「" + esc(wn.term) + "」は別名に登録していません</div>" +
+            "<p>" + esc(wn.note) + "</p><p>原稿中の出現：" + line + "（合計 " + w.total + " 回）</p></div>";
+        });
+
+        /* セクション本文 */
+        const secs = [["Summary", "概要"], ["Appearance", "外見"], ["History", "来歴"]].map(function (pair) {
+          const body = (c.sections[pair[0]] || "").trim();
+          const unfilled = !body || body === "（未記入）";
+          return "<section class=\"sec-block\"><h2>" + pair[1] + " <span class=\"en\">" + pair[0].toUpperCase() + "</span></h2>" +
+            "<div class=\"sec-body\">" + (unfilled ? "<p class=\"unfilled\">（未記入）— 正本 Markdown の <code>## " + pair[0] + "</code> に記入するとここに表示されます</p>" : mdHTML(body)) + "</div></section>";
+        }).join("");
+
+        $app.innerHTML =
+          "<div class=\"crumbs\"><a href=\"#/\">トップ</a> ＞ キャラクター ＞ " + esc(c.name) + "</div>" +
+          "<div class=\"detail-head\" style=\"--cc:" + cc + "\">" +
+            "<h1 class=\"big-name\"><span class=\"color-dot\"></span>" + esc(c.name) +
+            (c.narrator ? "<span class=\"narr-badge\">語り手</span>" : "") + "</h1>" +
+            (c.full_name ? "<div class=\"full-name\">本名：" + esc(c.full_name) + "</div>" : "") +
+          "</div>" +
+          narratorHTML +
+          "<div class=\"detail-grid\"><div class=\"detail-main\">" +
+            secs +
+            "<section class=\"sec-block\"><h2>言及 <span class=\"en\">MENTIONS — 自動検出</span></h2>" +
+            "<p class=\"section-lead\" style=\"margin-top:0\">本名・フルネーム・登録済み別名を原稿テキストに文字列照合した結果です。全話合計 <strong>" + c._total + " 回</strong>" +
+            (c._firstEp ? "、名前の初出は <strong>" + "第" + c._firstEp + "話</strong>。" : "。") + "</p>" +
+            "<table class=\"mention-table\"><thead><tr><th>話</th><th>言及回数</th><th>内訳（照合語ごと）</th></tr></thead><tbody>" + rows + "</tbody></table>" +
+            firstExcerpt + boxes +
+            "</section>" +
+          "</div>" +
+          "<aside class=\"detail-side\"><div class=\"infobox\"><div class=\"ib-title\">属性</div><table>" + ibRows + "</table></div></aside>" +
+          "</div>";
+        window.scrollTo(0, 0);
+      }
+
+      /* ===== 話ページ ===== */
+      let readerState = {}; /* charName -> bool （ハイライト表示） */
+
+      function highlightedText(ep) {
+        /* 全キャラの照合語＋候補語を1つのトークン列にする */
+        const tokens = [];
+        CHARS.forEach(function (c) {
+          if (!readerState[c.name]) return;
+          c._regTokens.forEach(function (t) { tokens.push(t); });
+          c._candTokens.forEach(function (t) { tokens.push(t); });
+        });
+        const paras = ep.text.split(/\n/);
+        function renderPara(p, inner) {
+          return "<p>" + inner + "</p>";
+        }
+        function boldWrap(p) {
+          const m = p.trim().match(/^\*\*([^*]+)\*\*$/);
+          return m ? { text: m[1], bold: true } : { text: p, bold: false };
+        }
+        if (!tokens.length) {
+          return paras.map(function (p) {
+            if (p.trim() === "") return "";
+            const b = boldWrap(p);
+            return renderPara(p, b.bold ? "<strong>" + esc(b.text) + "</strong>" : esc(b.text));
+          }).join("");
+        }
+        const sorted = tokens.slice().sort(function (a, b) { return b.term.length - a.term.length; });
+        const re = new RegExp("(" + sorted.map(function (t) { return escapeRe(t.term); }).join("|") + ")", "g");
+        const kindOf = {}, colorOf = {};
+        tokens.forEach(function (t) { kindOf[t.term] = t.kind; colorOf[t.term] = t.char; });
+        return paras.map(function (p) {
+          if (p.trim() === "") return "";
+          const b = boldWrap(p);
+          const parts = b.text.split(re);
+          const inner = parts.map(function (part) {
+            if (kindOf[part]) {
+              const c = charByName[colorOf[part]];
+              return "<mark class=\"" + (kindOf[part] === "cand" ? "cand" : "") + "\" style=\"--mc:var(--c-" + c.color_key + ")\" title=\"" + esc(c.name) + (kindOf[part] === "cand" ? "（表記ゆれ候補）" : "") + "\">" + esc(part) + "</mark>";
+            }
+            return esc(part);
+          }).join("");
+          return renderPara(p, b.bold ? "<strong>" + inner + "</strong>" : inner);
+        }).join("");
+      }
+
+      function viewEpisode(n) {
+        const ep = EPS[n - 1];
+        if (!ep) { viewHome(); return; }
+        CHARS.forEach(function (c) { if (!(c.name in readerState)) readerState[c.name] = true; });
+
+        const cards = CHARS.map(function (c) {
+          const per = c._per[ep.n];
+          const cc = "var(--c-" + c.color_key + ")";
+          if (per.total > 0) {
+            return "<a class=\"reverse-card\" style=\"--cc:" + cc + "\" href=\"#/character/" + encodeURIComponent(c.name) + "\">" +
+              "<span class=\"rc-name\">" + esc(c.name) + "<span class=\"rc-cnt\"><b>" + per.total + "</b> 回言及</span></span>" +
+              breakdownChips(c, per) + "</a>";
+          }
+          if (c.narrator) {
+            return "<a class=\"reverse-card absent\" style=\"--cc:" + cc + "\" href=\"#/character/" + encodeURIComponent(c.name) + "\">" +
+              "<span class=\"rc-name\">" + esc(c.name) + "<span class=\"rc-cnt\">名前の言及なし</span></span>" +
+              "<span class=\"rc-note\">語り手として登場（「俺」" + c._ore[ep.n] + "回）。名前で呼ばれる場面はありません。</span></a>";
+          }
+          return "<a class=\"reverse-card absent\" href=\"#/character/" + encodeURIComponent(c.name) + "\">" +
+            "<span class=\"rc-name\">" + esc(c.name) + "<span class=\"rc-cnt\">言及なし</span></span>" +
+            "<span class=\"rc-note\">この話では名前・別名の出現がありません" + (per.candTotal > 0 ? "（表記ゆれ候補は " + per.candTotal + " 回）" : "") + "。</span></a>";
+        }).join("");
+
+        const toggles = CHARS.map(function (c) {
+          return "<button type=\"button\" class=\"toggle-chip\" data-char=\"" + esc(c.name) + "\" aria-pressed=\"" + (readerState[c.name] ? "true" : "false") + "\">" +
+            "<span class=\"dot\" style=\"--cc:var(--c-" + c.color_key + ");background:var(--c-" + c.color_key + ")\"></span>" + esc(c.name) + "</button>";
+        }).join("");
+
+        const w = WATCH[0];
+        const watchNote = (w && w.per[ep.n] > 0)
+          ? "<div class=\"warn-box\"><div class=\"wb-title\">この話の「" + esc(w.term) + "」（" + w.per[ep.n] + "回）について</div><p>" + esc(w.note) + "</p></div>"
+          : "";
+
+        const prevNext =
+          "<div style=\"display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap\">" +
+          (ep.n > 1 ? "<a href=\"#/episode/" + (ep.n - 1) + "\">← 第" + (ep.n - 1) + "話</a>" : "<span></span>") +
+          (ep.n < EPS.length ? "<a href=\"#/episode/" + (ep.n + 1) + "\">第" + (ep.n + 1) + "話 →</a>" : "<span></span>") + "</div>";
+
+        $app.innerHTML =
+          "<div class=\"crumbs\"><a href=\"#/\">トップ</a> ＞ 話 ＞ " + epLabel(ep) + "</div>" +
+          "<div class=\"ep-detail-head\"><div class=\"ep-no-label\">EPISODE " + ep.n + "</div>" +
+          "<h1 class=\"page-title serif\">" + epLabel(ep) + (ep.title ? "　" + esc(ep.title) : "") + "</h1>" +
+          "<p class=\"lead\">原稿 " + fmt(ep.text.length) + " 字。下の一覧は、この話の原稿から自動検出された言及の逆引きです。</p></div>" +
+
+          "<h2 class=\"section-title\">この話で言及されたキャラクター</h2>" +
+          "<div class=\"reverse-grid\">" + cards + "</div>" +
+          watchNote +
+
+          "<h2 class=\"section-title\">原稿 <span class=\"note\">名前をハイライト表示できます（破線＝表記ゆれ候補）</span></h2>" +
+          "<div class=\"reader-toolbar\"><span class=\"rt-label\">ハイライト：</span>" + toggles + "</div>" +
+          "<div class=\"reader\" id=\"reader\">" + highlightedText(ep) + "</div>" +
+          prevNext;
+
+        Array.prototype.forEach.call($app.querySelectorAll(".toggle-chip"), function (btn) {
+          btn.addEventListener("click", function () {
+            const name = btn.getAttribute("data-char");
+            readerState[name] = !readerState[name];
+            btn.setAttribute("aria-pressed", readerState[name] ? "true" : "false");
+            document.getElementById("reader").innerHTML = highlightedText(ep);
+          });
+        });
+        window.scrollTo(0, 0);
+      }
+
+      /* ===== ルーター ===== */
+      function route() {
+        const h = location.hash || "#/";
+        const mChar = h.match(/^#\/character\/(.+)$/);
+        const mEp = h.match(/^#\/episode\/(\d+)$/);
+        if (mChar) viewCharacter(decodeURIComponent(mChar[1]));
+        else if (mEp) viewEpisode(parseInt(mEp[1], 10));
+        else viewHome();
+      }
+      window.addEventListener("hashchange", route);
+      Array.prototype.forEach.call(document.querySelectorAll("[data-nav]"), function (a) {
+        a.addEventListener("click", function () {
+          setTimeout(function () {
+            const id = a.getAttribute("data-nav") === "chars" ? "chars" : "eps";
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 60);
+        });
+      });
+      route();
+    </script>
+  </body>
+</html>
